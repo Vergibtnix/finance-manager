@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Buchungen</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="container mt-4">
+<div th:replace="fragments/navbar :: body"></div>
+
+<h1 class="mb-4">Buchungen</h1>
+
+<a th:href="@{/transactions/new}" class="btn btn-success mb-3">Neue Buchung</a>
+
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+    <tr>
+        <th>ID</th>
+        <th>Datum</th>
+        <th>Betrag</th>
+        <th>Typ</th>
+        <th>Kategorie</th>
+        <th>Beschreibung</th>
+        <th>Aktionen</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="t : ${transactions}">
+        <td th:text="${t.id}"></td>
+        <td th:text="${t.date}"></td>
+        <td th:text="${t.amount}"></td>
+        <td th:text="${t.type}"></td>
+        <td th:text="${t.category}"></td>
+        <td th:text="${t.description}"></td>
+
+        <td>
+            <a th:href="@{'/transactions/edit/' + ${t.id}}"
+               class="btn btn-warning btn-sm">
+                <i class="bi bi-pencil-square"></i> Bearbeiten
+            </a>
+
+            <a th:href="@{'/transactions/delete/' + ${t.id}}"
+               class="btn btn-danger btn-sm ms-1"
+               onclick="return confirm('Wirklich löschen?');">
+                <i class="bi bi-trash-fill"></i> Löschen
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- ⭐ Pagination -->
+<nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination">
+
+        <!-- Zurück -->
+        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+            <a class="page-link" th:href="@{/transactions(page=${currentPage - 1})}">
+                Zurück
+            </a>
+        </li>
+
+        <!-- Seitenzahlen -->
+        <li class="page-item"
+            th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+            th:classappend="${i == currentPage} ? 'active'">
+            <a class="page-link" th:href="@{/transactions(page=${i})}"
+               th:text="${i + 1}"></a>
+        </li>
+
+        <!-- Weiter -->
+        <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+            <a class="page-link" th:href="@{/transactions(page=${currentPage + 1})}">
+                Weiter
+            </a>
+        </li>
+
+    </ul>
+</nav>
+
+<a th:href="@{/statistics}" class="btn btn-info mt-3">Statistik</a>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
