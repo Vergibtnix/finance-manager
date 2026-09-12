@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: finance-manager-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: finance_db
+      POSTGRES_USER: finance_user
+      POSTGRES_PASSWORD: finance_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init:/docker-entrypoint-initdb.d
+
+volumes:
+  postgres_data:
+

@@ -10,7 +10,8 @@
     - **Maven**
 
 - DB
-  - **MySQL (My SQL Workbench)**
+  - **PostgreSQL 16**
+  - **Docker / Docker Compose**
 
 - Frontend
     - **Thymeleaf**
@@ -70,3 +71,32 @@ v
 - Mobile‑freundliche Navigation
 - Tabellen skalieren automatisch
 - Dashboard passt sich an alle Bildschirmgrößen an
+
+## PostgreSQL mit Docker starten
+
+1. PostgreSQL-Container starten:
+
+```powershell
+docker compose up -d
+```
+
+2. Spring Boot App starten (nutzt dann PostgreSQL auf `localhost:5433`):
+
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+
+3. Container stoppen:
+
+```powershell
+docker compose down
+```
+
+### Verwendete DB-Konfiguration
+
+- URL: `jdbc:postgresql://localhost:5433/finance_db`
+- User: `finance_user`
+- Passwort: `finance_password`
+
+Hinweis: Das Init-Skript liegt unter `docker/init/01-init.sql` und wird nur beim ersten Start mit leerem Docker-Volume ausgeführt.
+Wenn `5433` bereits belegt ist, passe den linken Port im Mapping in `docker-compose.yml` an und aktualisiere die JDBC-URL entsprechend.
