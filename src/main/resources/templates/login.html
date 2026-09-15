@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login</title>
+    <script th:src="@{/js/theme.js}"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/app.css}" rel="stylesheet">
+</head>
+<body class="container mt-4">
+<div th:replace="~{fragments/navbar :: body}"></div>
+
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm p-4">
+            <h1 class="h3 mb-4 text-center">Login</h1>
+
+            <div class="alert alert-success" th:if="${param.registered}">
+                Registrierung erfolgreich. Du kannst dich jetzt anmelden.
+            </div>
+            <div class="alert alert-success" th:if="${param.logout}">
+                Du wurdest erfolgreich abgemeldet.
+            </div>
+            <div class="alert alert-danger" th:if="${param.error}">
+                Benutzername oder Passwort ist ungültig.
+            </div>
+
+            <form th:action="@{/login}" method="post">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Benutzername</label>
+                    <input id="username" name="username" type="text" class="form-control" autocomplete="username" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Passwort</label>
+                    <input id="password" name="password" type="password" class="form-control" autocomplete="current-password" required>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Einloggen</button>
+                    <a th:href="@{/register}" class="btn btn-outline-secondary">Noch kein Konto? Registrieren</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

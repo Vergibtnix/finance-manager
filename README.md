@@ -3,8 +3,8 @@
 ## Technologien
 
 - Backend
-    - **Java 17** 
-    - **Spring Boot 3**
+    - **Java 21** 
+    - **Spring Boot 4.1**
     - **Spring MVC**
     - **Spring Data JPA**
     - **Maven**
@@ -16,6 +16,7 @@
 - Frontend
     - **Thymeleaf**
     - **Bootstrap 5**
+    - **Dark Mode mit Persistenz via localStorage**
 
 
 ## Features
@@ -59,6 +60,7 @@ v
 ### Navigation
 - Moderne Bootstrap‑Navbar
 - Aktiver Menüpunkt wird automatisch hervorgehoben
+- Integrierter Dark‑Mode‑Schalter
 - Links zu:
     - Buchungen
     - Neue Buchung
@@ -74,22 +76,35 @@ v
 
 ## PostgreSQL mit Docker starten
 
-1. PostgreSQL-Container starten:
+1. PostgreSQL und pgAdmin starten:
 
 ```powershell
 docker compose up -d
 ```
 
-2. Spring Boot App starten (nutzt dann PostgreSQL auf `localhost:5433`):
+2. Optional den Status prüfen:
+
+```powershell
+docker compose ps
+```
+
+3. Spring Boot App starten (nutzt PostgreSQL auf `localhost:5433`):
 
 ```powershell
 .\mvnw.cmd spring-boot:run
 ```
 
-3. Container stoppen:
+4. Container stoppen:
 
 ```powershell
 docker compose down
+```
+
+Wenn du das Datenbank-Volume komplett neu initialisieren willst, z. B. nach einer Schema-Änderung:
+
+```powershell
+docker compose down -v
+docker compose up -d
 ```
 
 ### Verwendete DB-Konfiguration
@@ -97,6 +112,21 @@ docker compose down
 - URL: `jdbc:postgresql://localhost:5433/finance_db`
 - User: `finance_user`
 - Passwort: `finance_password`
+- pgAdmin: `http://localhost:5050`
+  - E-Mail: `admin@finance-manager.local`
+  - Passwort: `admin123`
+
+Die Spring-Konfiguration in `src/main/resources/application.properties` verwendet Umgebungsvariablen mit sinnvollen Defaults:
+
+- `SPRING_DATASOURCE_URL`
+- `SPRING_DATASOURCE_USERNAME`
+- `SPRING_DATASOURCE_PASSWORD`
 
 Hinweis: Das Init-Skript liegt unter `docker/init/01-init.sql` und wird nur beim ersten Start mit leerem Docker-Volume ausgeführt.
-Wenn `5433` bereits belegt ist, passe den linken Port im Mapping in `docker-compose.yml` an und aktualisiere die JDBC-URL entsprechend.
+Wenn `5433` oder `5050` bereits belegt ist, passe das Port-Mapping in `docker-compose.yml` an.
+
+## Dark Mode
+
+- Der Dark Mode ist auf allen Seiten verfügbar.
+- Die Einstellung bleibt nach einem Reload im Browser gespeichert.
+- Der Umschalter sitzt rechts in der Navbar.

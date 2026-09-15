@@ -1,0 +1,53 @@
+﻿body {
+    min-height: 100vh;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.app-navbar {
+    backdrop-filter: blur(8px);
+}
+.theme-toggle {
+    min-width: 9.5rem;
+}
+.card {
+    border-radius: 1rem;
+}
+.category-badge,
+.category-preview {
+    color: #fff;
+}
+.category-suggestion {
+    min-width: 7rem;
+}
+.form-control-color {
+    width: 4.5rem;
+    min-width: 4.5rem;
+}
+[data-bs-theme="dark"] body {
+    background: linear-gradient(180deg, #111827 0%, #0f172a 100%);
+}
+[data-bs-theme="dark"] .card,
+[data-bs-theme="dark"] .table,
+[data-bs-theme="dark"] .form-control,
+[data-bs-theme="dark"] .form-select,
+[data-bs-theme="dark"] .page-link,
+[data-bs-theme="dark"] .btn-outline-secondary {
+    box-shadow: none;
+}
+[data-bs-theme="dark"] .table {
+    --bs-table-bg: rgba(17, 24, 39, 0.82);
+    --bs-table-striped-bg: rgba(30, 41, 59, 0.9);
+    --bs-table-hover-bg: rgba(51, 65, 85, 0.9);
+    --bs-table-color: #e5e7eb;
+    --bs-table-border-color: rgba(148, 163, 184, 0.22);
+}
+[data-bs-theme="dark"] .card,
+[data-bs-theme="dark"] form.card {
+    background-color: rgba(15, 23, 42, 0.85);
+    border-color: rgba(148, 163, 184, 0.18);
+}
+[data-bs-theme="dark"] .text-decoration-none {
+    color: inherit;
+}
+[data-bs-theme="dark"] .category-preview {
+    border-color: rgba(148, 163, 184, 0.3);
+}

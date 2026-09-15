@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+<nav class="navbar navbar-expand-lg bg-body-tertiary border rounded-3 shadow-sm mb-4 app-navbar">
     <div class="container-fluid">
 
         <a class="navbar-brand" th:href="@{/transactions}">Finance Manager</a>
@@ -15,7 +15,7 @@
 
         <div class="collapse navbar-collapse" id="navbarNav">
 
-            <ul class="navbar-nav">
+            <ul class="navbar-nav me-auto" th:if="${isAuthenticated}">
 
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/}"
@@ -53,6 +53,29 @@
 
 
             </ul>
+
+            <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
+                <span class="navbar-text" th:if="${isAuthenticated}">
+                    Angemeldet als <strong th:text="${currentUsername}">user</strong>
+                </span>
+
+                <a class="btn btn-outline-primary" th:if="${!isAuthenticated}" th:href="@{/login}">
+                    Login
+                </a>
+
+                <a class="btn btn-primary" th:if="${!isAuthenticated}" th:href="@{/register}">
+                    Registrieren
+                </a>
+
+                <form th:if="${isAuthenticated}" th:action="@{/logout}" method="post" class="m-0">
+                    <button type="submit" class="btn btn-outline-danger">Logout</button>
+                </form>
+
+                <button class="btn btn-outline-secondary theme-toggle" type="button" id="theme-toggle"
+                        aria-label="Dark Mode umschalten">
+                    <span id="theme-toggle-label">🌙 Dark Mode</span>
+                </button>
+            </div>
 
         </div>
     </div>

@@ -1,16 +1,93 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Buchungen</title>
+    <script th:src="@{/js/theme.js}"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/app.css}" rel="stylesheet">
 </head>
 <body class="container mt-4">
-<div th:replace="fragments/navbar :: body"></div>
+<div th:replace="~{fragments/navbar :: body}"></div>
 
 <h1 class="mb-4">Buchungen</h1>
 
-<a th:href="@{/transactions/new}" class="btn btn-success mb-3">Neue Buchung</a>
+<div class="d-flex justify-content-between align-items-center gap-3 flex-wrap mb-3">
+    <a th:href="@{/transactions/new}" class="btn btn-success">Neue Buchung</a>
+    <a th:href="@{/statistics}" class="btn btn-info">Berichte & Statistik</a>
+</div>
+
+<form method="get" th:action="@{/transactions}" class="card shadow-sm p-3 mb-4">
+    <div class="row g-3 align-items-end">
+        <div class="col-md-3">
+            <label for="search" class="form-label">Suche</label>
+            <input id="search" name="search" class="form-control" th:value="${filter.search}"
+                   placeholder="Beschreibung oder Kategorie">
+        </div>
+
+        <div class="col-md-2">
+            <label for="category" class="form-label">Kategorie</label>
+            <select id="category" name="category" class="form-select">
+                <option value="">Alle</option>
+                <option th:each="category : ${categories}" th:value="${category}" th:text="${category}"
+                        th:selected="${filter.category == category}"></option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label for="type" class="form-label">Typ</label>
+            <select id="type" name="type" class="form-select">
+                <option value="">Alle</option>
+                <option value="EINNAHME" th:selected="${filter.type != null and filter.type.name() == 'EINNAHME'}">Einnahme</option>
+                <option value="AUSGABE" th:selected="${filter.type != null and filter.type.name() == 'AUSGABE'}">Ausgabe</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label for="startDate" class="form-label">Von</label>
+            <input id="startDate" name="startDate" type="date" class="form-control" th:value="${filter.startDate}">
+        </div>
+
+        <div class="col-md-2">
+            <label for="endDate" class="form-label">Bis</label>
+            <input id="endDate" name="endDate" type="date" class="form-control" th:value="${filter.endDate}">
+        </div>
+
+        <div class="col-md-2">
+            <label for="minAmount" class="form-label">Min. Betrag</label>
+            <input id="minAmount" name="minAmount" type="number" step="0.01" class="form-control" th:value="${filter.minAmount}">
+        </div>
+
+        <div class="col-md-2">
+            <label for="maxAmount" class="form-label">Max. Betrag</label>
+            <input id="maxAmount" name="maxAmount" type="number" step="0.01" class="form-control" th:value="${filter.maxAmount}">
+        </div>
+
+        <div class="col-md-2">
+            <label for="sortField" class="form-label">Sortieren nach</label>
+            <select id="sortField" name="sortField" class="form-select">
+                <option value="date" th:selected="${filter.sortField == null or filter.sortField == 'date'}">Datum</option>
+                <option value="amount" th:selected="${filter.sortField == 'amount'}">Betrag</option>
+                <option value="category" th:selected="${filter.sortField == 'category'}">Kategorie</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label for="sortDir" class="form-label">Reihenfolge</label>
+            <select id="sortDir" name="sortDir" class="form-select">
+                <option value="desc" th:selected="${filter.sortDir == null or filter.sortDir == 'desc'}">Absteigend</option>
+                <option value="asc" th:selected="${filter.sortDir == 'asc'}">Aufsteigend</option>
+            </select>
+        </div>
+
+        <div class="col-12 d-flex gap-2 flex-wrap">
+            <button type="submit" class="btn btn-primary">Filter anwenden</button>
+            <a th:href="@{/transactions}" class="btn btn-outline-secondary">Zurücksetzen</a>
+        </div>
+    </div>
+</form>
 
 <table class="table table-striped table-hover">
     <thead class="table-dark">
@@ -29,9 +106,15 @@
     <tr th:each="t : ${transactions}">
         <td th:text="${t.id}"></td>
         <td th:text="${t.date}"></td>
-        <td th:text="${t.amount}"></td>
+        <td th:text="${#numbers.formatDecimal(t.amount, 1, 'POINT', 2, 'COMMA')} + ' €'"></td>
         <td th:text="${t.type}"></td>
-        <td th:text="${t.category}"></td>
+        <td>
+            <span class="badge category-badge px-3 py-2"
+                  th:style="'background-color:' + ${t.categoryColor} + ';'"
+                  th:text="${t.category}">
+                Kategorie
+            </span>
+        </td>
         <td th:text="${t.description}"></td>
 
         <td>
@@ -47,16 +130,22 @@
             </a>
         </td>
     </tr>
+    <tr th:if="${#lists.isEmpty(transactions)}">
+        <td colspan="7" class="text-center text-muted py-4">
+            Keine Transaktionen für die aktuellen Filter gefunden.
+        </td>
+    </tr>
     </tbody>
 </table>
 
 <!-- ⭐ Pagination -->
-<nav aria-label="Page navigation" class="mt-4">
+<nav aria-label="Page navigation" class="mt-4" th:if="${totalPages > 1}">
     <ul class="pagination">
 
         <!-- Zurück -->
         <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-            <a class="page-link" th:href="@{/transactions(page=${currentPage - 1})}">
+            <a class="page-link"
+               th:href="@{/transactions(page=${currentPage - 1}, search=${filter.search}, category=${filter.category}, type=${filter.type}, startDate=${filter.startDate}, endDate=${filter.endDate}, minAmount=${filter.minAmount}, maxAmount=${filter.maxAmount}, sortField=${filter.sortField}, sortDir=${filter.sortDir})}">
                 Zurück
             </a>
         </li>
@@ -65,13 +154,15 @@
         <li class="page-item"
             th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
             th:classappend="${i == currentPage} ? 'active'">
-            <a class="page-link" th:href="@{/transactions(page=${i})}"
+            <a class="page-link"
+               th:href="@{/transactions(page=${i}, search=${filter.search}, category=${filter.category}, type=${filter.type}, startDate=${filter.startDate}, endDate=${filter.endDate}, minAmount=${filter.minAmount}, maxAmount=${filter.maxAmount}, sortField=${filter.sortField}, sortDir=${filter.sortDir})}"
                th:text="${i + 1}"></a>
         </li>
 
         <!-- Weiter -->
         <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
-            <a class="page-link" th:href="@{/transactions(page=${currentPage + 1})}">
+            <a class="page-link"
+               th:href="@{/transactions(page=${currentPage + 1}, search=${filter.search}, category=${filter.category}, type=${filter.type}, startDate=${filter.startDate}, endDate=${filter.endDate}, minAmount=${filter.minAmount}, maxAmount=${filter.maxAmount}, sortField=${filter.sortField}, sortDir=${filter.sortDir})}">
                 Weiter
             </a>
         </li>
@@ -79,7 +170,6 @@
     </ul>
 </nav>
 
-<a th:href="@{/statistics}" class="btn btn-info mt-3">Statistik</a>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

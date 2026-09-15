@@ -1,40 +1,45 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Monatsstatistik</title>
+  <script th:src="@{/js/theme.js}"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link th:href="@{/css/app.css}" rel="stylesheet">
 </head>
 
 <body class="container mt-4">
 
 <!-- Navbar -->
-<div th:replace="fragments/navbar :: body"></div>
+<div th:replace="~{fragments/navbar :: body}"></div>
 
 <h1 class="mb-4">Monatsstatistik</h1>
+<p class="text-muted" th:text="${periodLabel}">Monat Jahr</p>
 
 <!-- Monat / Jahr Auswahl -->
 <form class="row g-3 mb-4" method="get" th:action="@{/statistics/monthly}">
   <div class="col-md-3">
-    <label class="form-label">Jahr</label>
-    <input type="number" class="form-control" name="year" th:value="${year}">
+    <label for="year" class="form-label">Jahr</label>
+    <input type="number" id="year" class="form-control" name="year" th:value="${year}">
   </div>
 
   <div class="col-md-3">
-    <label class="form-label">Monat</label>
-    <select class="form-select" name="month" th:value="${month}">
-      <option th:value="1">Januar</option>
-      <option th:value="2">Februar</option>
-      <option th:value="3">März</option>
-      <option th:value="4">April</option>
-      <option th:value="5">Mai</option>
-      <option th:value="6">Juni</option>
-      <option th:value="7">Juli</option>
-      <option th:value="8">August</option>
-      <option th:value="9">September</option>
-      <option th:value="10">Oktober</option>
-      <option th:value="11">November</option>
-      <option th:value="12">Dezember</option>
+    <label for="month" class="form-label">Monat</label>
+    <select id="month" class="form-select" name="month">
+      <option th:value="1" th:selected="${month == 1}">Januar</option>
+      <option th:value="2" th:selected="${month == 2}">Februar</option>
+      <option th:value="3" th:selected="${month == 3}">März</option>
+      <option th:value="4" th:selected="${month == 4}">April</option>
+      <option th:value="5" th:selected="${month == 5}">Mai</option>
+      <option th:value="6" th:selected="${month == 6}">Juni</option>
+      <option th:value="7" th:selected="${month == 7}">Juli</option>
+      <option th:value="8" th:selected="${month == 8}">August</option>
+      <option th:value="9" th:selected="${month == 9}">September</option>
+      <option th:value="10" th:selected="${month == 10}">Oktober</option>
+      <option th:value="11" th:selected="${month == 11}">November</option>
+      <option th:value="12" th:selected="${month == 12}">Dezember</option>
     </select>
   </div>
 
@@ -53,7 +58,7 @@
         <h5 class="card-title text-success">
           <i class="bi bi-arrow-up-circle-fill"></i> Einnahmen
         </h5>
-        <p class="fs-3 fw-bold" th:text="${income} + ' €'"></p>
+        <p class="fs-3 fw-bold" th:text="${#numbers.formatDecimal(income, 1, 'POINT', 2, 'COMMA')} + ' €'"></p>
       </div>
     </div>
   </div>
@@ -65,7 +70,7 @@
         <h5 class="card-title text-danger">
           <i class="bi bi-arrow-down-circle-fill"></i> Ausgaben
         </h5>
-        <p class="fs-3 fw-bold" th:text="${expense} + ' €'"></p>
+        <p class="fs-3 fw-bold" th:text="${#numbers.formatDecimal(expense, 1, 'POINT', 2, 'COMMA')} + ' €'"></p>
       </div>
     </div>
   </div>
@@ -78,8 +83,8 @@
           <i class="bi bi-wallet2"></i> Saldo
         </h5>
         <p class="fs-3 fw-bold"
-           th:text="${balance} + ' €'"
-           th:classappend="${balance >= 0} ? 'text-success' : 'text-danger'">
+           th:text="${#numbers.formatDecimal(balance, 1, 'POINT', 2, 'COMMA')} + ' €'"
+           th:classappend="${balance.signum() >= 0} ? 'text-success' : 'text-danger'">
         </p>
       </div>
     </div>
